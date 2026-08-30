@@ -1,0 +1,12 @@
+*.exe
+
+# Auto-managed large files (>5MB)
+nevarix-agent/nevarix-agent.exe
+nevarix-api/nevarix-api.exe
+nevarix-api/.armin/docker-data/postgres/pg_wal/000000010000000000000001
+nevarix-api/.armin/docker-data/postgres-smoke/pg_wal/000000010000000000000001
+nevarix-api/bin/nevarix-api.exe
+nevarix-webui/node_modules/@esbuild/win32-x64/esbuild.exe
+nevarix-webui/node_modules/lightningcss-win32-x64-msvc/lightningcss.win32-x64-msvc.node
+nevarix-webui/node_modules/typescript/lib/_tsc.js
+nevarix-webui/node_modules/typescript/lib/typescript.js
