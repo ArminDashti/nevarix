@@ -1,0 +1,20 @@
+name: nevarix
+
+services:
+  nevarix-webui:
+    image: ${IMAGE_TAG:-nevarix-webui:latest}
+    container_name: nevarix-webui
+    restart: "no"
+    expose:
+      - "${INTERNAL_PORT:-80}"
+    ports:
+      - target: ${INTERNAL_PORT:-80}
+        published: ${PUBLISH_PORT-5184}
+        protocol: tcp
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    name: ${DOCKER_NETWORK:-nevarix-net}
+    external: true

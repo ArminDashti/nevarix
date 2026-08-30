@@ -1,0 +1,24 @@
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /health                   --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).Router.func1 (4 handlers)
+[GIN-debug] GET    /api/v1/health            --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).Router.func2 (4 handlers)
+[GIN-debug] POST   /api/v1/ingest/metrics    --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).postIngestMetrics-fm (4 handlers)
+[GIN-debug] GET    /api/v1/dashboard         --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getDashboard-fm (4 handlers)
+[GIN-debug] GET    /api/v1/cpu               --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getCPU-fm (4 handlers)
+[GIN-debug] GET    /api/v1/memory            --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getMemory-fm (4 handlers)
+[GIN-debug] GET    /api/v1/disk              --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getDisk-fm (4 handlers)
+[GIN-debug] GET    /api/v1/bandwidth         --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getBandwidth-fm (4 handlers)
+[GIN-debug] GET    /api/v1/docker/images     --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getDockerImages-fm (4 handlers)
+[GIN-debug] GET    /api/v1/docker/containers --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getDockerContainers-fm (4 handlers)
+[GIN-debug] GET    /api/v1/softether/sessions --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getSoftEtherSessions-fm (4 handlers)
+[GIN-debug] GET    /api/v1/softether/users   --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getSoftEtherUsers-fm (4 handlers)
+[GIN-debug] GET    /api/v1/softether/users/:username/sessions --> github.com/ArminDashti/nevarix-api/internal/http.(*Server).getSoftEtherUserSessions-fm (4 handlers)
+[GIN] 2026/08/13 - 02:56:45 | 200 |            0s |       127.0.0.1 | GET      "/health"
+[GIN] 2026/08/13 - 02:56:58 | 200 |            0s |       127.0.0.1 | GET      "/health"
+[GIN] 2026/08/13 - 02:56:58 | 200 |     16.9331ms |       127.0.0.1 | POST     "/api/v1/ingest/metrics"
+[GIN] 2026/08/13 - 02:56:58 | 200 |      1.5685ms |       127.0.0.1 | GET      "/api/v1/dashboard"
+[GIN] 2026/08/13 - 02:57:06 | 200 |      7.4288ms |       127.0.0.1 | POST     "/api/v1/ingest/metrics"
+[GIN] 2026/08/13 - 02:57:11 | 200 |     69.5561ms |       127.0.0.1 | POST     "/api/v1/ingest/metrics"
+[GIN] 2026/08/13 - 02:57:14 | 200 |       969.7µs |       127.0.0.1 | GET      "/api/v1/dashboard"

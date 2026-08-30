@@ -1,0 +1,28 @@
+*.exe
+# Logs
+logs
+*.log
+npm-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+.dev-dist
+
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+
+# === auto-managed large files (>5MB) ===
+
+# BEGIN AUTO-MANAGED LARGE FILES (>5MB)
+# END AUTO-MANAGED LARGE FILES
+
+# === auto-managed large files (github-commit-push-all) ===
+
+# AUTO-IGNORE-LARGE-FILES (>5MB) â€” managed by github-commit-push-all
+# github-commit-push-all: large files (>5MB) — auto-managed
+
+# auto-managed: files > 5MB

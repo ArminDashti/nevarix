@@ -1,0 +1,82 @@
+name: nevarix
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nevarix-postgres
+    restart: "no"
+    environment:
+      POSTGRES_USER: nevarix
+      POSTGRES_PASSWORD: nevarix
+      POSTGRES_DB: nevarix
+    volumes:
+      - nevarix-postgres-data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nevarix -d nevarix"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - app_net
+
+  softether:
+    image: softethervpn/vpnserver:latest
+    container_name: nevarix-softether
+    restart: "no"
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    environment:
+      PSK: nevarix
+      USERNAME: nevarix
+      PASSWORD: nevarix
+      SPW: nevarix
+      HPW: nevarix
+    volumes:
+      - nevarix-softether-data:/usr/vpnserver
+    networks:
+      - app_net
+
+  nevarix-api:
+    image: ${IMAGE_TAG:-nevarix-api:latest}
+    container_name: nevarix-api
+    restart: "no"
+    environment:
+      HTTP_ADDR: "0.0.0.0:${INTERNAL_PORT:-8090}"
+      DATABASE_URL: postgres://nevarix:nevarix@postgres:5432/nevarix?sslmode=disable
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5184,http://127.0.0.1:5184,http://localhost:5173,http://127.0.0.1:5173}
+      SOFTETHER_CONTAINER: nevarix-softether
+      SOFTETHER_PASSWORD: nevarix
+      SOFTETHER_HUB: DEFAULT
+      SOFTETHER_ENABLED: "true"
+      METRICS_HISTORY_POINTS: "60"
+      SOFTETHER_POLL_SECONDS: "30"
+      AGENT_INGEST_TOKEN: ${AGENT_INGEST_TOKEN:-change-me}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    expose:
+      - "${INTERNAL_PORT:-8090}"
+    ports:
+      - target: ${INTERNAL_PORT:-8090}
+        published: ${PUBLISH_PORT-8181}
+        protocol: tcp
+    depends_on:
+      postgres:
+        condition: service_healthy
+      softether:
+        condition: service_started
+    networks:
+      - app_net
+
+volumes:
+  nevarix-postgres-data:
+    name: nevarix-postgres-data
+  nevarix-softether-data:
+    name: nevarix-softether-data
+
+networks:
+  app_net:
+    name: ${DOCKER_NETWORK:-nevarix-net}
+    external: true

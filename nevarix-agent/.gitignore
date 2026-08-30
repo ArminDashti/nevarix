@@ -1,0 +1,33 @@
+# Binaries
+/nevarix-agent
+/agent
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test / coverage
+*.test
+*.out
+coverage.out
+
+# Env / secrets
+.env
+.env.local
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Go
+vendor/
+
+# github-commit-push-all: auto-ignore large files (>5MB)
+
+# AUTO-IGNORE-LARGE-FILES (>5MB) â€” managed by github-commit-push-all
+# github-commit-push-all: large files (>5MB) — auto-managed
+
+# auto-managed: files > 5MB

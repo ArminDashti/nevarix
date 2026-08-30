@@ -1,0 +1,134 @@
+# Local Docker hot-reload: Postgres + SoftEther + Go Air API + Go Air agent + Vite WebUI.
+# Usage: docker compose -f docker-compose.local.yml -p nevarix up -d --force-recreate
+name: nevarix
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: "no"
+    environment:
+      POSTGRES_USER: nevarix
+      POSTGRES_PASSWORD: nevarix
+      POSTGRES_DB: nevarix
+    ports:
+      - "5441:5432"
+    volumes:
+      - nevarix-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nevarix -d nevarix"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  softether:
+    image: softethervpn/vpnserver:latest
+    container_name: nevarix-local-softether
+    restart: "no"
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    environment:
+      PSK: nevarix
+      USERNAME: nevarix
+      PASSWORD: nevarix
+      SPW: nevarix
+      HPW: nevarix
+    ports:
+      - "5556:5555"
+      - "4433:443"
+      - "1195:1194/udp"
+      - "9920:992"
+    volumes:
+      - nevarix-softether-data:/usr/vpnserver
+
+  api:
+    image: golang:1.25-alpine
+    restart: "no"
+    working_dir: /app
+    environment:
+      HTTP_ADDR: "0.0.0.0:8090"
+      DATABASE_URL: postgres://nevarix:nevarix@postgres:5432/nevarix?sslmode=disable
+      CORS_ORIGINS: http://localhost:5183,http://127.0.0.1:5183,http://localhost:5173,http://127.0.0.1:5173
+      SOFTETHER_CONTAINER: nevarix-local-softether
+      SOFTETHER_PASSWORD: nevarix
+      SOFTETHER_HUB: DEFAULT
+      SOFTETHER_ENABLED: "true"
+      METRICS_HISTORY_POINTS: "60"
+      SOFTETHER_POLL_SECONDS: "30"
+      AGENT_INGEST_TOKEN: change-me
+      GOTOOLCHAIN: auto
+    command:
+      - sh
+      - -c
+      - apk add --no-cache git gcc musl-dev docker-cli && go install github.com/air-verse/air@v1.61.7 && air -c .air.toml
+    volumes:
+      - .:/app
+      - nevarix-gomod:/go/pkg/mod
+      - nevarix-gotmp:/app/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8181:8090"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      softether:
+        condition: service_started
+
+  agent:
+    image: golang:1.23-alpine
+    restart: "no"
+    working_dir: /app
+    environment:
+      NEVARIX_API_URL: http://api:8090
+      NEVARIX_AGENT_TOKEN: change-me
+      NEVARIX_AGENT_ID: nevarix-local-agent
+      NEVARIX_HOSTNAME: nevarix-local
+      COLLECT_INTERVAL_SECONDS: "5"
+      GOTOOLCHAIN: auto
+    command:
+      - sh
+      - -c
+      - apk add --no-cache git gcc musl-dev && go install github.com/air-verse/air@v1.61.7 && air -c .air.toml
+    volumes:
+      - ../nevarix-agent:/app
+      - nevarix-agent-gomod:/go/pkg/mod
+      - nevarix-agent-gotmp:/app/tmp
+    depends_on:
+      - api
+
+  webui:
+    image: node:22-alpine
+    restart: "no"
+    working_dir: /app
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      VITE_BASE_PATH: "/nevarix/"
+      VITE_HMR_CLIENT_PORT: "80"
+      WATCHPACK_POLLING: "true"
+      VITE_API_PROXY: http://api:8090
+    command:
+      - sh
+      - -c
+      - rm -rf /app/node_modules/* /app/node_modules/.[!.]* 2>/dev/null; npm install && npm run dev -- --host 0.0.0.0 --port 5173 --strictPort
+    volumes:
+      - ../nevarix-webui:/app
+      - nevarix-webui-node-modules:/app/node_modules
+    ports:
+      - "5183:5173"
+    networks:
+      - default
+      - pc-armin-local
+    depends_on:
+      - api
+
+volumes:
+  nevarix-postgres-data:
+  nevarix-softether-data:
+  nevarix-gomod:
+  nevarix-gotmp:
+  nevarix-agent-gomod:
+  nevarix-agent-gotmp:
+  nevarix-webui-node-modules:
+
+networks:
+  pc-armin-local:
+    external: true

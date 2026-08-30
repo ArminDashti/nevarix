@@ -1,0 +1,20 @@
+name: nevarix
+
+services:
+  nevarix-agent:
+    image: ${IMAGE_TAG:-nevarix-agent:latest}
+    container_name: nevarix-agent
+    restart: "no"
+    environment:
+      NEVARIX_API_URL: ${NEVARIX_API_URL:-http://nevarix-api:8090}
+      NEVARIX_AGENT_TOKEN: ${NEVARIX_AGENT_TOKEN:-change-me}
+      NEVARIX_AGENT_ID: ${NEVARIX_AGENT_ID:-nevarix-agent}
+      NEVARIX_HOSTNAME: ${NEVARIX_HOSTNAME:-nevarix-agent}
+      COLLECT_INTERVAL_SECONDS: ${COLLECT_INTERVAL_SECONDS:-5}
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    name: ${DOCKER_NETWORK:-nevarix-net}
+    external: true
