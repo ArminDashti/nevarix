@@ -10,3 +10,5 @@ nevarix-webui/node_modules/@esbuild/win32-x64/esbuild.exe
 nevarix-webui/node_modules/lightningcss-win32-x64-msvc/lightningcss.win32-x64-msvc.node
 nevarix-webui/node_modules/typescript/lib/_tsc.js
 nevarix-webui/node_modules/typescript/lib/typescript.js
+
+# AUTO-LARGE-FILES (>5MB) — managed by commit-push-to-github
